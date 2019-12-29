@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Reflection;
 
 namespace TinySeoSharp.Web.Utils
@@ -11,7 +10,7 @@ namespace TinySeoSharp.Web.Utils
   internal static class UrlBuilderUtils {
     public static string CreateFragment(Type valueType, object value) {
       if (valueType == typeof(string)) {
-        return NormalizeFragment.String((string)value);
+        return NormalizeUtils.String((string)value);
       }
       if (valueType.IsEnum) {
         return EnumFragment(valueType, value);
@@ -41,7 +40,7 @@ namespace TinySeoSharp.Web.Utils
       var field = enumType.GetField(value.ToString());
       var description = field.GetCustomAttribute(typeof(DescriptionAttribute), false) as DescriptionAttribute;
       var fragment = description == null ? field.Name : description.Description; 
-      return NormalizeFragment.String(fragment);
+      return NormalizeUtils.String(fragment);
     }
 
     private static IEnumerable<string> GetParts(IEnumerable<string> parts) {
@@ -54,21 +53,4 @@ namespace TinySeoSharp.Web.Utils
       return (new[] { str }).Concat(next).Reverse();
     }
   } 
-
-  internal static class NormalizeFragment {
-    public static string String(string input) {
-      return Fns.Aggregate(input, (prev, fn) => fn(prev));
-    }
-
-    private static IEnumerable<Func<string, string>> Fns = new Func<string, string>[] {
-      (input) => input.ToLower(),
-      (input) => StopWordsPattern.Replace(input, " "),
-      (input) => Regex.Replace(input, @"\W+", "-"),
-      (input) => Regex.Replace(input, @"-{2,}", "-"),
-      (input) => input.Trim(new char[] {'-', ' '}),
-    };
-
-    private static IEnumerable<string> StopWords = new List<string> { "for", "and", "with", "plus" };
-    private static Regex StopWordsPattern = new Regex($@"\W({string.Join("|", StopWords)})\W");
-  }
 }

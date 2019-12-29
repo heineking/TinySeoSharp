@@ -9,7 +9,7 @@ namespace TinySeoSharp.Web.Utils
 {
   internal static class EnumFuzzy {
     public static object Parse(Type enumType, string target) {
-      var bestMatch = GetEnumInformation(enumType).FirstOrDefaultFuzzy(d => Normalize(d.Source), Normalize(target));
+      var bestMatch = GetEnumInformation(enumType).FirstOrDefaultFuzzy(d => NormalizeUtils.String(d.Source), NormalizeUtils.String(target));
       return Enum.Parse(enumType, bestMatch.Name);
     }
 
@@ -22,15 +22,6 @@ namespace TinySeoSharp.Web.Utils
         results.Add((field.Name, source));
       }
       return results;
-    }
-
-    private static string Normalize(string input) {
-      var fns = new List<Func<string, string>> {
-        (s) => s.ToLower(),
-        (s) => Regex.Replace(s, @"(\sand\s|\sinc[^\w])", string.Empty),
-        (s) => Regex.Replace(s, @"[^\w]+", string.Empty),
-      };
-      return fns.Aggregate(input, (prev, fn) => fn(prev));
     }
   }
 }

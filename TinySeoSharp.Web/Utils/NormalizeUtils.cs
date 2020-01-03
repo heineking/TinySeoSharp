@@ -16,6 +16,7 @@ namespace TinySeoSharp.Web.Utils {
       (input) => Regex.Replace(input, @"-{2,}", "-"),
       (input) => input.Trim(new char[] {'-', ' '}),
     };
+
     private static IEnumerable<string> StopWords = new List<string> {
       "for",
       "and",

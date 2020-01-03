@@ -12,6 +12,8 @@ namespace TinySeoSharp.Web {
 
   public class Route {
     public static Route For(string route) => new Route(route);
+    public static Route For<T>(string route) where T : new() => new Route(QueryUtils.Create<T>(route));
+
     private readonly IEnumerable<RouteTokens> _routeTokens;
     private readonly string _route;
     private readonly string _path;
